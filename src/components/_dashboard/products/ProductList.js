@@ -27,7 +27,7 @@ ProductList.propTypes = {
 export default function ProductList({ products, ...other }) {
   const dispatch = useDispatch();
   const [statusData, setStatusData] = useState(null);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [userDetails, setUserDetails] = useState(null);
   const [mobileNumber, setMobileNumber] = useState('');
   const [message, setMessage] = useState('');
@@ -89,7 +89,7 @@ export default function ProductList({ products, ...other }) {
                 Open
               </Button>
               <Dialog
-                open={!statusData.isAuthenticated}
+                open={open}
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
@@ -115,13 +115,13 @@ export default function ProductList({ products, ...other }) {
                   </div>
                 </DialogContent>
                 <DialogActions>
-                  {/* <Button
+                  <Button
                     onClick={() => {
                       handleClose();
                     }}
                   >
                     Close
-                  </Button> */}
+                  </Button>
                 </DialogActions>
               </Dialog>
             </>
