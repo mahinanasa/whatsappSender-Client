@@ -8,7 +8,6 @@ export const getQrCode = leadData => {
 
         //const config = {header: {'Content-Type': 'application/json'}}  
         try {
-
             const res = await axios.get(`${endPoint}/api/whatsapp/status`);
             console.log(res.data);
             dispatch({ type: SAVE_LEAD, payload: res.data })
