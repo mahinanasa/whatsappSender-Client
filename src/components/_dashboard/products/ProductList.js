@@ -50,6 +50,7 @@ export default function ProductList({ products, ...other }) {
   useEffect(() => {
 
     const timer = window.setInterval(async () => {
+      
       if (!userDetails || (userDetails && Object.keys(userDetails).length === 0)) {
         await getStatus();
       }
@@ -87,6 +88,10 @@ export default function ProductList({ products, ...other }) {
   const logoutFn = async() => {
     
     const res = await dispatch(logout());
+    
+    if(res){
+      setUserDetails("");
+    }
   }
 
   const handleUploadClick = async(e)=>{
