@@ -11,7 +11,10 @@ import {
   DialogTitle,
   Button,
   TextField,
-  TextareaAutosize
+  TextareaAutosize,
+  Fab,
+  Chip,
+  Typography
 } from '@mui/material';
 import {
   getQrCode,
@@ -19,7 +22,8 @@ import {
   logout,
 } from 'src/redux/_actions/leadAction';
 import  Loader  from '../../Loader'
-
+import { ClassNames } from '@emotion/react';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 ProductList.propTypes = {
   products: PropTypes.array.isRequired
 };
@@ -31,6 +35,7 @@ export default function ProductList({ products, ...other }) {
   const [userDetails, setUserDetails] = useState(null);
   const [mobileNumber, setMobileNumber] = useState('');
   const [message, setMessage] = useState('');
+  const [selectedFile, setSelectedFile] = useState('');
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -43,11 +48,12 @@ export default function ProductList({ products, ...other }) {
   }, []);
 
   useEffect(() => {
+
     const timer = window.setInterval(async () => {
-      if (userDetails || (userDetails && Object.keys(userDetails).length === 0)) {
+      if (!userDetails || (userDetails && Object.keys(userDetails).length === 0)) {
         await getStatus();
       }
-    }, 20000);
+    }, 2000);
     return () => window.clearInterval(timer);
   }, [userDetails]);
 
@@ -63,14 +69,51 @@ export default function ProductList({ products, ...other }) {
   };
 
   const sendMessage = async () => {
-    if(mobileNumber !== "" && message !== ""){
-      const res = await dispatch(sendMessages({ mobileNo: mobileNumber, message: message }));
+    if(mobileNumber !== ""){
+      let tempMsg = message
+      selectedFile !== '' && selectedFile.length > 0 && (tempMsg = "  ")
+      if(tempMsg !== ""){
+      const res = await dispatch(sendMessages({ mobileNo: mobileNumber, message: tempMsg, selectedFiles: selectedFile }));
+      
+      if(res && res.sent){
+        setSelectedFile("")
+        setMessage("")
+        
+      }
+    }
     }
   };
 
   const logoutFn = async() => {
-    debugger
+    
     const res = await dispatch(logout());
+  }
+
+  const handleUploadClick = async(e)=>{
+    
+    let files = Array.from(e.target.files)
+   let arr = [...selectedFile]
+   for(let i=0; i < files.length; i++){
+     let base64Url = await getBase64File(files[i])
+     arr.push({dataUrl: base64Url, fileName: files[i].name})
+     if(i === files.length - 1)setSelectedFile(arr)
+   }
+   
+
+  }
+  const getBase64File = async(file) => {
+    const reader = new FileReader()
+    return new Promise((resolve, reject) =>{
+      reader.onloadend = (e) =>{
+        resolve(e.target.result)
+      }
+      reader.readAsDataURL(file)
+    })
+  }
+
+  const handleDelete = (file) =>{
+    
+    setSelectedFile((chips) => chips.filter(chip => chip.fileName !== file.fileName))
   }
   return (
     <>
@@ -176,6 +219,47 @@ export default function ProductList({ products, ...other }) {
                 placeholder="Type your message"
                 value={message}
               />
+            </Grid>
+            <Grid item xs={3}>
+              <input
+                  accept=""
+                  style={{display: 'none'}}
+                  multiple
+                  type="file"
+                  id="contained-button-file"
+                  onChange={(e)=>handleUploadClick(e)}
+                  />
+                  <label 
+                  htmlFor="contained-button-file">
+                    <Fab component="span"
+                    className={ClassNames.button}>
+                      <AttachFileIcon/> 
+                    </Fab>
+                  </label>
+            </Grid>
+            <Grid
+            item
+            justify="flex-start" xs={9}
+            >
+              {
+                selectedFile && selectedFile.length > 0 &&
+                <>
+                File Selected: 
+                <Grid
+                container spacing={0}>
+                  {
+                    selectedFile.map(v =>{ return (
+                      <Grid item xs={6}> 
+                      <Chip onDelete={(e)=>handleDelete(v)} className="m-2" label={v.fileName}/> 
+                      </Grid>
+                    )} 
+                      )
+                  }
+
+                </Grid>
+                </>
+              }
+              
             </Grid>
             <br />
             <Grid item xs={12}>

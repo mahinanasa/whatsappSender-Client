@@ -2,7 +2,7 @@ import { ADD_LEAD, SAVE_LEAD, UPDATE_LEAD, DELETE_LEAD } from "../_types/leadTyp
 import { CLEAR_ERRORS } from './../types';
 import { setAlert } from './../_actions/alertAction'
 import axios from 'axios';
-const endPoint =  'https://whatsappcampaign.herokuapp.com'
+const endPoint =  'http://localhost:4000'
 export const getQrCode = leadData => {
     return async (dispatch) => {
 
@@ -10,8 +10,6 @@ export const getQrCode = leadData => {
         try {
 
             const res = await axios.get(`${endPoint}/api/whatsapp/status`);
-debugger
-
             console.log(res.data);
             dispatch({ type: SAVE_LEAD, payload: res.data })
             return res.data
@@ -28,10 +26,8 @@ export const sendMessages = msgData => {
 
         //const config = {header: {'Content-Type': 'application/json'}}  
         try {
-            //
-debugger
             const res = await axios.post(`${endPoint}/api/whatsapp/sendMessage`, msgData);
-            debugger
+            
             console.log(res.data);
             await dispatch({ type: ADD_LEAD, payload: res.data })
 
