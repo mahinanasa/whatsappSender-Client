@@ -2,7 +2,7 @@ import { ADD_LEAD, SAVE_LEAD, UPDATE_LEAD, DELETE_LEAD } from "../_types/leadTyp
 import { CLEAR_ERRORS } from './../types';
 import { setAlert } from './../_actions/alertAction'
 import axios from 'axios';
-const endPoint =  'http://localhost:4000'
+const endPoint =  'https://whatsappcampaign.herokuapp.com'
 export const getQrCode = leadData => {
     return async (dispatch) => {
 
